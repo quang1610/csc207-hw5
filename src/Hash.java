@@ -1,3 +1,5 @@
+package src;
+
 import java.lang.Byte;
 import java.util.Arrays;
 
@@ -18,16 +20,18 @@ public class Hash {
 
   public String toString() {
     String hashString = new String();
-
+    int temp;
+   
     for (int i = 0; i < this.data.length; i++) {
-      int temp = Byte.toUnsignedInt(this.data[i]);
-      hashString += String.format("#{0:X}", temp);
+      temp = Byte.toUnsignedInt(this.data[i]);
+      hashString += String.format("%02x", temp);
     }
     return hashString;
   }
-
+  
+  
   public boolean equals(Object other) {
     return (other instanceof Hash) && (Arrays.equals(((Hash) other).getData(), this.data));
   }
-
+  
 }
