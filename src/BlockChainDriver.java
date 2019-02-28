@@ -3,7 +3,6 @@ package src;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.security.NoSuchAlgorithmException;
-import java.io.*;
 
 // the main class that holds the main function
 public class BlockChainDriver {
@@ -15,9 +14,9 @@ public class BlockChainDriver {
   // Methods
 
   /**
-   * the main function that run the program. It will print out the entire block chain and ask the user for command.
-   * If the command is not valid, the program will ask the user to re-input.
-   * The program will terminate when the user enters "quit"
+   * the main function that run the program. It will print out the entire block chain and ask the
+   * user for command. If the command is not valid, the program will ask the user to re-input. The
+   * program will terminate when the user enters "quit"
    * 
    * @param String[], args. Expected length to be 1. args[0] is the initial amount of the entire
    *        system. it should be able to convert into an integer.
@@ -45,7 +44,7 @@ public class BlockChainDriver {
         printChain();
         // start taking user's input
         String cmd = scanner.next();
-        
+
         // depend on the input cmd, choose the appropriate operation...
         while (!cmd.equals("quit")) {
           switch (cmd) {
@@ -102,15 +101,16 @@ public class BlockChainDriver {
    */
   private static void checking() {
     if (chain.isValidBlockChain()) {
-      pen.println("Chain is valid!");
+      pen.println("Chain is Valid!");
     } else {
-      pen.println("Chain is invalid");
+      pen.println("Chain is INVALID!");
     }
   }
 
   /**
-   * appending: ask user for amount and nonce, then create a new block with the given information and append to the block chain.
-   * If the block is not valid (mismatch preHash, incorrect num, invalid amount of transaction), the transaction is denied.
+   * appending: ask user for amount and nonce, then create a new block with the given information
+   * and append to the block chain. If the block is not valid (mismatch preHash, incorrect num,
+   * does not have a hash of itself), the transaction is denied.
    * 
    * @throws Exception
    * @throws NoSuchAlgorithmException
@@ -125,8 +125,9 @@ public class BlockChainDriver {
   }
 
   /**
-   * mining: ask user for the transaction amount, then find the valid nonce for the next block to add to the chain.
-   * Once the nonce is found, print it to the screen. This method does not add the new block to the chain.
+   * mining: ask user for the transaction amount, then find the valid nonce for the next block to
+   * add to the chain. Once the nonce is found, print it to the screen. This method does not add the
+   * new block to the chain.
    * 
    * @throws NoSuchAlgorithmException
    */

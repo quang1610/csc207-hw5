@@ -63,11 +63,11 @@ public class Block {
     Hash temp = new Hash(md.digest());
     // check if the newly made Hash is valid
     if (!temp.isValid()) {
-      System.err.println("Invalid hash code: " + temp.toString());
+      System.err.println("Invalid hash code: " + temp.toString() +".");
     } else {
       this.hash = temp;
     } // if !temp.isValid
-  }
+  } // constructor
 
   // Methods
 
@@ -131,7 +131,7 @@ public class Block {
         return "Block " + this.num + "(Amount: " + this.amount + ", Nonce: " + this.nonce
             + ", prevHash: " + "null" + ", hash: " + this.hash.toString() + ")";
       } else {
-        // else...
+        // else if this block is a normal block in the chain.
         return "Block " + this.num + "(Amount: " + this.amount + ", Nonce: " + this.nonce
             + ", prevHash: " + this.prevHash.toString() + ", hash: " + this.hash.toString() + ")";
       }

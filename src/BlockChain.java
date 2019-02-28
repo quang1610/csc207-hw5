@@ -7,24 +7,22 @@ public class BlockChain {
   private Node first;
   private Node last;
   private int initialAmount;
-  private int aliceBalance;
 
   // Constructors
   public BlockChain(int initial) throws NoSuchAlgorithmException {
     this.first = new Node(new Block(0, initial, null));
-    this.initialAmount = initial;
-    this.aliceBalance = initial;
     this.last = this.first;
+    this.initialAmount = initial;
   }
 
   // Methods
 
   /**
-   * Returns a block with discovering a nonce that creates a valid hash
+   * Returns a block with valid hash from the input amount of transaction
    * 
    * @param int, amount
    * 
-   * @return Block, this block will be placed at the end of a blockchain, with the given amount
+   * @return Block, a newly created block
    * 
    * @throws NoSuchAlgorithmException
    */
@@ -42,33 +40,25 @@ public class BlockChain {
   }
 
   /**
-   * Checks if a given block is valid (valid block number, valid previous hash, and the amount
-   * should be reasonable) reasonable being Alice's balance does not exceed the total amount of
-   * money in the system, and the total amount of money in the system does not change. If not valid,
-   * we deny transaction.
+   * Checks if a given block is valid (valid block number, valid previous hash, and has a hash of
+   * itself). If so, we append the block to the end of the chain. If not valid, we deny transaction.
    * 
    * @param Block, blk
    */
   public void append(Block blk) {
-
-    if (!blk.getPrevHash().equals(this.last.block.getHash())
-        || (blk.getNum() != this.last.block.getNum() + 1)
-        || blk.getAmount() + this.aliceBalance > this.initialAmount
-        || blk.getAmount() + this.aliceBalance < 0) {
+    if (blk.getHash() == null || !blk.getPrevHash().equals(this.last.block.getHash())
+        || (blk.getNum() != this.last.block.getNum() + 1)) {
       System.err.println("Invalid block, transaction is denied");;
     } else {
       Node newNode = new Node(blk);
 
       this.last.nextNode = newNode;
       this.last = this.last.nextNode;
-      // temp
-      this.aliceBalance += this.last.block.getAmount();
     }
   }
 
   /**
-   * Removes the last block in a block chain, and update the balance to the state before the
-   * just-removed block is added.
+   * Removes the last block in a block chain.
    * 
    * @return boolean, false if the block chain only has one element, true if the size of the block
    *         chain is greater than 1.
@@ -79,10 +69,12 @@ public class BlockChain {
     } else {
       Node temp = this.first;
 
+      // get the block before the last block, store that in temp
       while (temp.block.getNum() != this.getSize() - 2) {
         temp = temp.nextNode;
       }
-      this.aliceBalance -= this.last.block.getAmount();
+
+      // remove the last block
       this.last = temp;
       this.last.nextNode = null;
 
@@ -100,21 +92,20 @@ public class BlockChain {
   }
 
   /**
-   * Checks if the block chain is valid (meaning 0 <= aliceBalance <= initialAmount), the number of
-   * each block is incrementing 1 by 1 from first to last, and the prevHash of current block matches
-   * the hash of the previous block
+   * Checks if the block chain is valid (meaning tracing aliceBalance so check that at anytime 0 <=
+   * aliceBalance <= initialAmount), the number of each block is incrementing 1 by 1 from first to
+   * last, and the prevHash of current block matches the hash of the previous block
    * 
    * @return boolean, True if the above conditions hold, false otherwise
    */
   public boolean isValidBlockChain() {
     int count = 0;
     Node temp = this.first;
+    int aliceBalance = 0;
 
-    if (this.aliceBalance > this.initialAmount || this.aliceBalance < 0) {
-      return false;
-    }
-
+    // go through the linked list till the final block
     while (count < this.getSize()) {
+
       // in case this is the last block
       if (count == this.getSize() - 1) {
         if (this.last.block.getNum() != this.getSize() - 1) {
@@ -124,8 +115,14 @@ public class BlockChain {
       } else if (!temp.block.getHash().equals(temp.nextNode.block.getPrevHash())
           || count != temp.block.getNum()) {
         return false;
-      }// else if
-      
+      } // else if
+
+      // check if the transaction amount is reasonable.
+      aliceBalance += temp.block.getAmount();
+      if (aliceBalance < 0 || aliceBalance > this.initialAmount) {
+        return false;
+      }
+
       temp = temp.nextNode;
       count++;
     }
@@ -136,9 +133,20 @@ public class BlockChain {
    * Prints the current account balance for Alice and Bob
    */
   public void printBalances() {
+    int aliceBalance = this.first.block.getAmount();
+    int bobBalance = 0;
+    Node temp = this.first.nextNode;
+
+    // calculate the balance of Alice and Bob
+    while (temp != null) {
+      aliceBalance += temp.block.getAmount();
+      bobBalance -= temp.block.getAmount();
+
+      temp = temp.nextNode;
+    }
+
     java.io.PrintWriter pen = new java.io.PrintWriter(System.out, true);
-    pen.println(
-        "Alice: " + this.aliceBalance + ", Bob:" + (this.initialAmount - this.aliceBalance));
+    pen.println("Alice: " + aliceBalance + ", Bob:" + bobBalance);
   }
 
   /**
